@@ -12,9 +12,23 @@ exports.up = pgm => {
       type: 'VARCHAR(50)',
       notNull: true
     },
+    year: {
+      type: 'NUMERIC',
+      notNull: true
+    },
     performer: {
       type: 'VARCHAR(50)',
       notNull: true
+    },
+    genre: {
+      type: 'VARCHAR(50)',
+      notNull: true
+    },
+    duration: {
+      type: 'NUMERIC'
+    },
+    albumId: {
+      type: 'VARCHAR(30)'
     }
   })
 }
