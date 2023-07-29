@@ -1,6 +1,6 @@
 const { nanoid } = require('nanoid')
 const { Pool } = require('pg')
-const { getSpesificSongData } = require('../../utils')
+const { filterSongData } = require('../../utils')
 const NotFoundError = require('../../exceptions/NotFoundError')
 const InvariantError = require('../../exceptions/InvariantError')
 
@@ -9,7 +9,7 @@ class SongsService {
     this._pool = new Pool()
   }
 
-  async addSong ({ title, year, genre, performer, duration, albumId }) {
+  async addSong ({ title, year, performer, genre, duration, albumId }) {
     const id = `song-${nanoid(16)}`
 
     const query = {
@@ -27,9 +27,30 @@ class SongsService {
     return successId
   }
 
-  async getSongs () {
-    const result = await this._pool.query('SELECT * FROM songs')
-    return result.rows.map(getSpesificSongData)
+  async getSongs ({ title = undefined, performer = undefined }) {
+    const query = {
+      text: 'SELECT * FROM songs',
+      values: []
+    }
+
+    if (title !== undefined) {
+      query.text += ' WHERE LOWER(title) LIKE $1'
+      query.values.push(`%${title.toLowerCase()}%`)
+    }
+
+    if (performer !== undefined) {
+      if (query.values.length === 0) {
+        query.text += ' WHERE'
+      } else {
+        query.text += ' AND'
+      }
+
+      query.text += ` LOWER(performer) LIKE $${query.values.length + 1}`
+      query.values.push(`%${performer.toLowerCase()}%`)
+    }
+
+    const result = await this._pool.query(query)
+    return result.rows.map(filterSongData)
   }
 
   async getSongById (id) {
@@ -46,10 +67,10 @@ class SongsService {
     return result.rows[0]
   }
 
-  async editSongById (id, { title, year, genre, performer, duration, albumId }) {
+  async editSongById (id, { title, year, performer, genre, duration, albumId }) {
     const query = {
-      text: 'UPDATE songs SET title=$1, year=$2, genre=$3, performer=$4, duration=$5, album_id=$6 WHERE id=$7 RETURNING id',
-      values: [title, year, genre, performer, duration, albumId, id]
+      text: 'UPDATE songs SET title=$1, year=$2, performer=$3, genre=$4, duration=$5, album_id=$6 WHERE id=$7 RETURNING id',
+      values: [title, year, performer, genre, duration, albumId, id]
     }
 
     const result = await this._pool.query(query)

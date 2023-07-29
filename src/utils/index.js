@@ -1,8 +1,17 @@
-/* eslint-disable camelcase */
-const getSpesificSongData = (song) => ({
-  id: song.id,
-  title: song.title,
-  performer: song.performer
+const filterSongData = ({ id, title, performer }) => ({
+  id, title, performer
 })
 
-module.exports = { getSpesificSongData }
+const filterSongDataIfNotNull = ({ id, title, performer }) => {
+  return { id, title, performer }
+}
+
+const filterAlbumData = ({ id, name, year }) => ({
+  id, name, year
+})
+
+module.exports = {
+  filterAlbumData,
+  filterSongDataIfNotNull,
+  filterSongData
+}
