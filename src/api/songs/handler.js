@@ -23,22 +23,22 @@ class SongsHandler {
   }
 
   async getSongsHandler (request, h) {
-    const albums = await this._service.getSongs()
+    const songs = await this._service.getSongs()
     return h.response({
       status: 'success',
       data: {
-        albums
+        songs
       }
     })
   }
 
   async getSongByIdHandler (request, h) {
     const { id } = request.params
-    const album = await this._service.getSongById(id)
+    const song = await this._service.getSongById(id)
 
     return h.request({
       status: 'success',
-      data: { album }
+      data: { song }
     })
   }
 
