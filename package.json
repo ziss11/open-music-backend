@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start-dev": "nodemon ./src/app.js"
+    "start-dev": "nodemon ./src/app.js",
+    "lint": "eslint ./",
+    "migrate": "node-pg-migrate"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,14 @@
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "auto-bind": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "joi": "^17.9.2",
+    "nanoid": "^4.0.2",
+    "node-pg-migrate": "^6.2.2",
+    "pg": "^8.11.1"
   }
 }

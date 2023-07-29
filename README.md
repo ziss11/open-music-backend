@@ -1,3 +1,3 @@
-# openm-music-backend
+# open-music-backend
 
 Back-End dummy project using NodeJS with Hapi Framework
