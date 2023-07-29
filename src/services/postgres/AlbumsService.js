@@ -2,7 +2,7 @@ const { nanoid } = require('nanoid')
 const { Pool } = require('pg')
 const InvariantError = require('../../exceptions/InvariantError')
 const NotFoundError = require('../../exceptions/NotFoundError')
-const { filterSongDataIfNotNull } = require('../../utils')
+const { filterSongData } = require('../../utils')
 
 class AlbumsService {
   constructor () {
@@ -42,7 +42,7 @@ class AlbumsService {
     const { name, year } = result.rows[0]
 
     const albumResult = { id, name, year }
-    const songsResult = result.rows.map(filterSongDataIfNotNull)
+    const songsResult = result.rows.map(filterSongData)
 
     return {
       album: albumResult,
