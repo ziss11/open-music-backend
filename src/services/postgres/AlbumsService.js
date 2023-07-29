@@ -38,7 +38,6 @@ class AlbumsService {
     if (!result.rows.length) {
       throw new NotFoundError('Album tidak ditemukan')
     }
-    console.log(result.rows[0])
 
     const { name, year } = result.rows[0]
 
