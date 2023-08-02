@@ -1,6 +1,5 @@
 const { nanoid } = require('nanoid')
 const { Pool } = require('pg')
-const { filterSongData } = require('../../utils')
 const NotFoundError = require('../../exceptions/NotFoundError')
 const InvariantError = require('../../exceptions/InvariantError')
 
@@ -29,7 +28,7 @@ class SongsService {
 
   async getSongs ({ title = undefined, performer = undefined }) {
     const query = {
-      text: 'SELECT * FROM songs',
+      text: 'SELECT id, title, performer FROM songs',
       values: []
     }
 
@@ -50,7 +49,7 @@ class SongsService {
     }
 
     const result = await this._pool.query(query)
-    return result.rows.map(filterSongData)
+    return result.rows
   }
 
   async getSongById (id) {
@@ -60,7 +59,7 @@ class SongsService {
     }
     const result = await this._pool.query(query)
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan')
     }
 
@@ -75,7 +74,7 @@ class SongsService {
 
     const result = await this._pool.query(query)
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Gagal memperbarui album. Id tidak ditemukan')
     }
   }
@@ -88,7 +87,7 @@ class SongsService {
 
     const result = await this._pool.query(query)
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song gagal dihapus. Id tidak ditemukan')
     }
   }
