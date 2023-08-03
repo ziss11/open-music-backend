@@ -2,31 +2,49 @@ module.exports = (handler) => [
   {
     method: 'POST',
     path: '/playlists',
-    handler: handler.postPlaylistHandler
+    handler: handler.postPlaylistHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   },
   {
     method: 'GET',
     path: '/playlists',
-    handler: handler.getPlaylistsHandler
+    handler: handler.getPlaylistsHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   },
   {
     method: 'DELETE',
     path: '/playlists/{id}',
-    handler: handler.deletePlaylistHandler
+    handler: handler.deletePlaylistHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   },
   {
     method: 'POST',
     path: '/playlists/{id}/songs',
-    handler: handler.postSongToPlaylistHandler
+    handler: handler.postSongToPlaylistHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   },
   {
     method: 'GET',
     path: '/playlists/{id}/songs',
-    handler: handler.getSongsInPlaylistHandler
+    handler: handler.getSongsInPlaylistHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   },
   {
     method: 'DELETE',
     path: '/playlists/{id}/songs',
-    handler: handler.deleteSongInPlaylistHandler
+    handler: handler.deleteSongInPlaylistHandler,
+    options: {
+      auth: 'openmusic_jwt'
+    }
   }
 ]
