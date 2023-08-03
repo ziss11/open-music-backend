@@ -27,9 +27,7 @@ class SongsHandler {
 
     return h.response({
       status: 'success',
-      data: {
-        songs
-      }
+      data: { songs }
     })
   }
 
@@ -52,7 +50,7 @@ class SongsHandler {
 
     return h.response({
       status: 'success',
-      message: 'Song berhasil diperbarui'
+      message: 'Lagu berhasil diperbarui'
     })
   }
 
@@ -63,7 +61,7 @@ class SongsHandler {
 
     return h.response({
       status: 'success',
-      message: 'Song berhasil dihapus'
+      message: 'Lagu berhasil dihapus'
     })
   }
 }
