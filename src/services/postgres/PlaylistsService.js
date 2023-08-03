@@ -141,6 +141,39 @@ class PlaylistsService {
       throw new InvariantError('Lagu gagal dihapus dari playlist. Id tidak ditemukan')
     }
   }
+
+  async addActivity ({ userId, playlistId, songId, action, time }) {
+    const id = `activity-${nanoid(16)}`
+    const query = {
+      text: 'INSERT INTO activities VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      values: [id, userId, playlistId, songId, action, time]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new InvariantError('Activity gagal ditambahkan')
+    }
+  }
+
+  async getPlaylistActivities (id) {
+    const query = {
+      text: `SELECT users.username, songs.title, activities.action, activities.time FROM activities
+      LEFT JOIN playlists ON activities.playlist_id=playlists.id
+      LEFT JOIN users ON activities.user_id=users.id
+      LEFT JOIN songs ON activities.song_id=songs.id
+      WHERE activities.playlist_id=$1`,
+      values: [id]
+    }
+
+    const result = await this._pool.query(query)
+    const activitiesResult = result.rows
+
+    return {
+      playlistId: id,
+      activities: activitiesResult.length !== 1 || activitiesResult[0].username != null ? activitiesResult : []
+    }
+  }
 }
 
 module.exports = PlaylistsService

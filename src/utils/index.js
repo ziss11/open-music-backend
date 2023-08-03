@@ -7,7 +7,6 @@ const filterSongData = ({ id, title, performer }) => ({
 const errorHandler = (server) => {
   server.ext('onPreResponse', (request, h) => {
     const { response } = request
-    console.log(response.message)
 
     if (response instanceof Error) {
       if (response instanceof ClientError) {
