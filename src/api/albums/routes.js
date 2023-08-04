@@ -29,7 +29,8 @@ module.exports = (handler) => [
       payload: {
         allow: 'multipart/form-data',
         multipart: true,
-        output: 'stream'
+        output: 'stream',
+        maxBytes: 1048576
       }
     }
   },
