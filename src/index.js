@@ -2,9 +2,12 @@ require('dotenv').config()
 
 const Hapi = require('@hapi/hapi')
 const Jwt = require('@hapi/jwt')
+const Inert = require('@hapi/inert')
+const path = require('path')
 
 const albums = require('./api/albums')
 const AlbumsService = require('./services/postgres/AlbumsService')
+const StorageService = require('./services/storage/StorageService')
 const AlbumsValidator = require('./validator/albums')
 
 const songs = require('./api/songs')
@@ -35,7 +38,10 @@ const ExportsValidator = require('./validator/exports')
 const ClientError = require('./exceptions/ClientError')
 
 const init = async () => {
+  const storageFolder = path.resolve(__dirname, '../assets/images/albums')
+
   const albumsService = new AlbumsService()
+  const storageService = new StorageService(storageFolder)
   const songsService = new SongsService()
   const usersService = new UsersService()
   const authenticationsService = new AuthenticationsService()
@@ -52,7 +58,10 @@ const init = async () => {
     }
   })
 
-  await server.register({ plugin: Jwt })
+  await server.register([
+    { plugin: Jwt },
+    { plugin: Inert }
+  ])
 
   server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
@@ -90,7 +99,8 @@ const init = async () => {
     {
       plugin: albums,
       options: {
-        service: albumsService,
+        albumsService,
+        storageService,
         validator: AlbumsValidator
       }
     },

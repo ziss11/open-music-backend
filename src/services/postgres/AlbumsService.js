@@ -29,7 +29,7 @@ class AlbumsService {
 
   async getAlbumById (id) {
     const query = {
-      text: `SELECT a.name, a.year, s.id, s.title, s.performer
+      text: `SELECT a.name, a.year, a.cover_url, s.id, s.title, s.performer
             FROM albums a LEFT JOIN songs s ON a.id=s.album_id WHERE a.id=$1`,
       values: [id]
     }
@@ -39,9 +39,9 @@ class AlbumsService {
       throw new NotFoundError('Album tidak ditemukan')
     }
 
-    const { name, year } = result.rows[0]
+    const { name, year, cover_url: coverUrl } = result.rows[0]
 
-    const albumResult = { id, name, year }
+    const albumResult = { id, name, year, coverUrl }
     const songsResult = result.rows.map(filterSongData)
 
     return {
@@ -73,6 +73,20 @@ class AlbumsService {
 
     if (!result.rowCount) {
       throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan')
+    }
+  }
+
+  async addAlbumCover (id, coverUrl) {
+    const query = {
+      text: 'UPDATE albums SET cover_url=$2 WHERE id=$1 RETURNING id',
+      values: [id, coverUrl]
+    }
+
+    const result = await this._pool.query(query)
+    const successId = result.rows[0].id
+
+    if (!successId) {
+      throw new InvariantError('Cover album gagal ditambahkan')
     }
   }
 }
