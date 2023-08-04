@@ -8,6 +8,7 @@ const path = require('path')
 const albums = require('./api/albums')
 const AlbumsService = require('./services/postgres/AlbumsService')
 const StorageService = require('./services/storage/StorageService')
+const CacheService = require('./services/redis/CacheService')
 const AlbumsValidator = require('./validator/albums')
 
 const songs = require('./api/songs')
@@ -40,7 +41,8 @@ const ClientError = require('./exceptions/ClientError')
 const init = async () => {
   const storageFolder = path.resolve(__dirname, '../assets/images/albums')
 
-  const albumsService = new AlbumsService()
+  const cacheService = new CacheService()
+  const albumsService = new AlbumsService(cacheService)
   const storageService = new StorageService(storageFolder)
   const songsService = new SongsService()
   const usersService = new UsersService()

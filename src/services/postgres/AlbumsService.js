@@ -5,8 +5,9 @@ const NotFoundError = require('../../exceptions/NotFoundError')
 const { filterSongData } = require('../../utils')
 
 class AlbumsService {
-  constructor () {
+  constructor (cacheService) {
     this._pool = new Pool()
+    this._cacheService = cacheService
   }
 
   async addAlbum ({ name, year }) {
@@ -116,6 +117,8 @@ class AlbumsService {
     if (!result.rowCount) {
       throw new InvariantError('Gagal menyukai album')
     }
+
+    this._cacheService.delete(`album_likes:${albumId}`)
   }
 
   async deleteAlbumLike (userId, albumId) {
@@ -125,16 +128,26 @@ class AlbumsService {
     }
 
     await this._pool.query(query)
+    this._cacheService.delete(`album_likes:${albumId}`)
   }
 
   async getAlbumLikes (albumId) {
-    const query = {
-      text: 'SELECT * FROM album_likes WHERE album_id=$1',
-      values: [albumId]
-    }
+    try {
+      const result = await this._cacheService.get(`album_likes:${albumId}`)
+      return {
+        header: 'cache',
+        likes: Number(result)
+      }
+    } catch (error) {
+      const query = {
+        text: 'SELECT * FROM album_likes WHERE album_id=$1',
+        values: [albumId]
+      }
 
-    const result = await this._pool.query(query)
-    return result.rowCount
+      const result = await this._pool.query(query)
+      await this._cacheService.set(`album_likes:${albumId}`, result.rowCount)
+      return { likes: result.rowCount }
+    }
   }
 }
 
