@@ -89,6 +89,53 @@ class AlbumsService {
       throw new InvariantError('Cover album gagal ditambahkan')
     }
   }
+
+  async verifyAlbumLike (userId, albumId) {
+    const query = {
+      text: 'SELECT * FROM album_likes WHERE user_id=$1 AND album_id=$2',
+      values: [userId, albumId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (result.rowCount) {
+      throw new InvariantError('Anda belum menyukai album ini')
+    }
+  }
+
+  async addAlbumLike (userId, albumId) {
+    const id = `like-${nanoid(16)}`
+
+    const query = {
+      text: 'INSERT INTO album_likes VALUES ($1, $2, $3) RETURNING id',
+      values: [id, userId, albumId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new InvariantError('Gagal menyukai album')
+    }
+  }
+
+  async deleteAlbumLike (userId, albumId) {
+    const query = {
+      text: 'DELETE FROM album_likes WHERE user_id=$1 AND album_id=$2 RETURNING id',
+      values: [userId, albumId]
+    }
+
+    await this._pool.query(query)
+  }
+
+  async getAlbumLikes (albumId) {
+    const query = {
+      text: 'SELECT * FROM album_likes WHERE album_id=$1',
+      values: [albumId]
+    }
+
+    const result = await this._pool.query(query)
+    return result.rowCount
+  }
 }
 
 module.exports = AlbumsService
