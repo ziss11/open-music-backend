@@ -30,7 +30,7 @@ module.exports = (handler) => [
         allow: 'multipart/form-data',
         multipart: true,
         output: 'stream',
-        maxBytes: 1048576
+        maxBytes: 512000
       }
     }
   },
