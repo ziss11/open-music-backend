@@ -28,6 +28,10 @@ const collaborations = require('./api/collaborations')
 const CollaborationsService = require('./services/postgres/CollaborationsService')
 const CollaborationsValidator = require('./validator/collaborations')
 
+const _exports = require('./api/exports')
+const ProducerService = require('./services/rabbitmq/ProducerService')
+const ExportsValidator = require('./validator/exports')
+
 const ClientError = require('./exceptions/ClientError')
 
 const init = async () => {
@@ -113,11 +117,20 @@ const init = async () => {
         usersService,
         validator: CollaborationsValidator
       }
+    },
+    {
+      plugin: _exports,
+      options: {
+        producerService: ProducerService,
+        playlistsService,
+        validator: ExportsValidator
+      }
     }
   ])
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request
+    console.log(response.message)
 
     if (response instanceof Error) {
       if (response instanceof ClientError) {
